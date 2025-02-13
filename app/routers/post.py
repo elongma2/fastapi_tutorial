@@ -16,13 +16,10 @@ def get_posts(db: Session = Depends(get_db), currentuser: int = Depends(oauth2.g
               limit :int = 10, skip : int = 0, search: Optional[str] = ""):
     #cursor.execute("SELECT * FROM posts")
     #posts = cursor.fetchall()
-
     #auto left join from postgres sql
     results = (db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(models.Vote, models.Vote.post_id == models.Post.id, isouter = True).group_by
     (models.Post.id).filter(models.Post.content.contains(search)).limit(limit).all())
     return results #auto serialize to json
-
-
 # @app.post("/createposts")
 # def create_posts(payload: dict = Body(...)):# extract all of the field in the request body convert it into dict
 #     print(payload)
